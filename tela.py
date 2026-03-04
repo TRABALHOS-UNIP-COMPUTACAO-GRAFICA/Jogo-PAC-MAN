@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+from collections import deque
 
 # Inicializa o pygame
 pygame.init()
@@ -11,7 +12,8 @@ LINHAS = 30
 COLUNAS = 25
 LARGURA = COLUNAS * TAMANHO_BLOCO
 ALTURA = LINHAS * TAMANHO_BLOCO
-
+VERMELHO = (255, 0, 0)
+AZUL_FRACO = (100, 100, 255)
 
 tela = pygame.display.set_mode((LARGURA,800))
 pygame.display.set_caption("Pac-Man")
@@ -68,13 +70,35 @@ power = False
 power_timer = 0
 fantasmas_comidos = 0
 # ================= FANTASMA =================
-fantasma = {"x": 23, "y": 28}
+fantasma = {"x": 10, "y": 15}
 # ================= POWER PELLETS =================
 
 
 clock = pygame.time.Clock()
 ultimo = pygame.time.get_ticks()
 atraso = 2000
+
+def bfs(inicio, fim):
+    fila = deque([inicio])
+    visitado = {inicio: None}
+
+    while fila:
+        atual = fila.popleft()
+        if atual == fim:
+            caminho = []
+            while atual:
+                caminho.append(atual)
+                atual = visitado[atual]
+            return caminho[::-1]
+
+        x, y = atual
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < COLUNAS and 0 <= ny < LINHAS:
+                if mapa[ny][nx] != 1 and (nx, ny) not in visitado:
+                    fila.append((nx, ny))
+                    visitado[(nx, ny)] = atual
+    return []
 # ================= MOVIMENTO FANTASMA =================
 def mover_fantasma():
     global pontuacao, power, fantasmas_comidos
@@ -139,6 +163,10 @@ def desenhar():
                        draw_top_right= True,
                        draw_bottom_left= True,
                        draw_bottom_right= True)
+    cor = AZUL_FRACO if power else VERMELHO
+    pygame.draw.circle(
+        tela, cor, (fantasma["x"] * TAMANHO_BLOCO + 12, fantasma["y"] * TAMANHO_BLOCO + 12), 10
+    )
     for i in range(vidas):
         x_vida = 500 + (i * 30) # Espaçamento entre os ícones
         y_vida = ALTURA + 25 # Centralizado no painel de 50px
@@ -147,19 +175,38 @@ def desenhar():
         pygame.draw.circle(tela, AMARELO, (x_vida, y_vida), 10)
 
     pygame.display.flip()
-def mover():
-    global pac_x, pac_y, pontuacao
+# ================= MOVIMENTO PACMAN =================
+def mover_pacman():
+    global fantasmas_comidos, direcao, direcao, pac_x, pac_y, pontuacao, power, power_timer
 
-    novo_x = (pac_x + direcao[0]) % COLUNAS
-    novo_y = (pac_y + direcao[1]) % LINHAS
+    # tenta virar
+    nx = (pac_x + direcao[0]) % COLUNAS
+    ny = (pac_y + direcao[1]) % LINHAS
 
-    if mapa[novo_y][novo_x] != 1:
-        pac_x = novo_x
-        pac_y = novo_y
+    if mapa[nx][ny] != 1:
+        pac_x = nx
+        pac_y = ny
 
         if mapa[pac_y][pac_x] == 0:
             mapa[pac_y][pac_x] = 2
             pontuacao += 10
+    # move
+   
+
+    if 0 <= nx < COLUNAS and 0 <= ny < LINHAS:
+        if mapa[ny][nx] != 1:
+            pac_x, pac_y = nx, ny
+
+            if mapa[ny][nx] == 0:
+                mapa[ny][nx] = 2
+                pontuacao += 10
+
+            if mapa[ny][nx] == 3:
+                mapa[ny][nx] = 2
+                pontuacao += 50
+                power = True
+                power_timer = pygame.time.get_ticks()
+                fantasmas_comidos = 0
 while True:
     clock.tick(10) 
 
@@ -181,7 +228,8 @@ while True:
                 direcao = (0, 1)
     if agora - ultimo > atraso:
         ultimo = agora
-    mover()
+    mover_pacman()
+    mover_fantasma()
     desenhar() 
     text_surface= font.render("Pontuação: " + str(pontuacao), True, BRANCO)
   
