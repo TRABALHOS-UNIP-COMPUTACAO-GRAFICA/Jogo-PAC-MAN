@@ -261,4 +261,3 @@ while True:
         tela.blit(win, (LARGURA // 2 - 150, ALTURA // 2))
 
     pygame.display.flip()
-
