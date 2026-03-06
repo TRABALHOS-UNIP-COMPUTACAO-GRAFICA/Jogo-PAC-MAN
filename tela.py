@@ -11,7 +11,7 @@ LINHAS = 30
 COLUNAS = 25
 LARGURA = COLUNAS * TAMANHO_BLOCO
 ALTURA = LINHAS * TAMANHO_BLOCO
-tempo_fantasma = 0
+tempo_fantasma = 0 
 velocidade_fantasma = 400
 iniciado = False
 tempo_inicio_fantasma = pygame.time.get_ticks()
@@ -210,7 +210,7 @@ def mover_fantasmas():
 
 def resetar():
     global mapa, pontuacao, vidas, power, game_over, vitoria
-    mapa = [linha[:] for linha in mapa_original]
+    mapa = mapa_original
     pontuacao = 0
     vidas = 3
     power = False
@@ -303,40 +303,41 @@ while True:
             x = coluna * TAMANHO_BLOCO
             y = linha * TAMANHO_BLOCO
 
-            if mapa[linha][coluna] == 1:
+            match mapa[linha][coluna]:
+                case 1:
+                    cima = neighbor(linha - 1, coluna)
+                    baixo = neighbor(linha + 1, coluna)
+                    esquerda = neighbor(linha, coluna - 1)
+                    direita = neighbor(linha, coluna + 1)
 
-                cima = neighbor(linha - 1, coluna)
-                baixo = neighbor(linha + 1, coluna)
-                esquerda = neighbor(linha, coluna - 1)
-                direita = neighbor(linha, coluna + 1)
+                    raio = 10
 
-                raio = 10
+                    pygame.draw.rect(
+                        tela,
+                        (0, 0, 180),
+                        (x, y, TAMANHO_BLOCO, TAMANHO_BLOCO),
+                        border_top_left_radius=raio if (cima and esquerda) else 0,
+                        border_top_right_radius=raio if (cima and direita) else 0,
+                        border_bottom_left_radius=raio if (baixo and esquerda) else 0,
+                        border_bottom_right_radius=raio if (baixo and direita) else 0,
+                    )
 
-                pygame.draw.rect(
-                    tela,
-                    (0, 0, 180),
-                    (x, y, TAMANHO_BLOCO, TAMANHO_BLOCO),
-                    border_top_left_radius=raio if (cima and esquerda) else 0,
-                    border_top_right_radius=raio if (cima and direita) else 0,
-                    border_bottom_left_radius=raio if (baixo and esquerda) else 0,
-                    border_bottom_right_radius=raio if (baixo and direita) else 0,
-                )
+                case 0:
+                    pygame.draw.circle(
+                        tela,
+                        (255, 255, 200),
+                        (x + TAMANHO_BLOCO // 2, y + TAMANHO_BLOCO // 2),
+                        3,
+                    )
 
-            elif mapa[linha][coluna] == 0:
-                pygame.draw.circle(
-                    tela,
-                    (255, 255, 200),
-                    (x + TAMANHO_BLOCO // 2, y + TAMANHO_BLOCO // 2),
-                    3,
-                )
-
-            elif mapa[linha][coluna] == 3:
-                pygame.draw.circle(
-                    tela,
-                    (255, 255, 255),
-                    (x + TAMANHO_BLOCO // 2, y + TAMANHO_BLOCO // 2),
-                    6,
-                )
+                case 3:
+                    pygame.draw.circle(
+                        tela,
+                        (255, 255, 255),
+                        (x + TAMANHO_BLOCO // 2, y + TAMANHO_BLOCO // 2),
+                        6)
+                case 4:
+                    pygame.draw.rect(tela, [128,128,128], (x, y, TAMANHO_BLOCO, TAMANHO_BLOCO))
 
     # ================= PACMAN =================
     pygame.draw.circle(
@@ -349,7 +350,7 @@ while True:
     # ================= FANTASMA =================
     for f in fantasmas:
 
-    cor = (100,100,255) if power else f["cor"]
+        cor = (100,100,255) if power else f["cor"]
 
     pygame.draw.circle(
         tela,
