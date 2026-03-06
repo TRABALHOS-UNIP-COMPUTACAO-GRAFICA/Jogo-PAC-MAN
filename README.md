@@ -1,76 +1,55 @@
 🟡 Pac-Man em Python
 
-Este projeto apresenta uma réplica do jogo Pac-Man, desenvolvida utilizando Python e a biblioteca Pygame, aplicando conceitos estudados em Computação Gráfica.
-O jogo utiliza primitivas gráficas para desenhar os elementos do cenário e personagens, além de implementar lógica de movimentação, inteligência artificial para fantasmas e sistema de pontuação.
+Projeto desenvolvido para a disciplina de Computação Gráfica, que apresenta uma réplica do clássico jogo Pac-Man, utilizando Python e a biblioteca Pygame.
 
-👥 Integrantes do Grupo
-Nome
-RA
-Sydhiney Silva
-G75EJI5
-Eduardo Theodoro
-R153FJ3
-Ariane Veras
-R197123
-Victor Donadi
-G593IC1
+O objetivo do projeto é aplicar conceitos estudados em aula, como primitivas gráficas, lógica de movimentação, detecção de colisão e inteligência artificial básica para os fantasmas.
 
-🎮 Demonstração do jogo
+⸻
 
-No jogo o jogador controla o Pac-Man, que deve percorrer o labirinto coletando pontos enquanto evita os fantasmas.
+🎮 Sobre o Projeto
 
-Funcionalidades principais:
-	•	Labirinto baseado no mapa clássico
+Este projeto implementa uma versão jogável do Pac-Man com:
+	•	Labirinto inspirado no jogo clássico
 	•	Sistema de pontuação
 	•	Sistema de vidas
-	•	Power pellets (modo de poder)
+	•	Power Pellet (modo de poder)
 	•	Inteligência artificial para os fantasmas
 	•	Tela inicial
 	•	Tela de vitória
 	•	Tela de Game Over
-	•	Reinício de partida
+	•	Reinício do jogo
+
+O jogo foi desenvolvido utilizando primitivas gráficas do Pygame, como:
+	•	pygame.draw.rect()
+	•	pygame.draw.circle()
+
+Essas primitivas são usadas para desenhar o labirinto, o Pac-Man, os fantasmas e os itens do jogo.
+
+⸻
 
 🧠 Inteligência Artificial dos Fantasmas
 
-Os fantasmas utilizam busca em grafos para perseguir o jogador.
+Os fantasmas utilizam um algoritmo de busca baseado em BFS (Breadth-First Search) para encontrar o menor caminho até o Pac-Man.
 
-Algoritmo utilizado:
-	•	Breadth First Search (BFS) para encontrar o menor caminho até o Pac-Man.
+Cada fantasma possui um comportamento inspirado no jogo original:
 
-Cada fantasma possui comportamento inspirado no jogo original:
+🔴 Blinky
+	•	Persegue diretamente o Pac-Man.
 
-Fantasma
-Cor
-Comportamento
-Blinky
-Vermelho
-Persegue diretamente o Pac-Man
-Pinky
-Rosa
-Tenta prever a posição futura do Pac-Man
-Inky
-Ciano
-Persegue com estratégia intermediária
-Clyde
-Laranja
-Alterna entre perseguir e fugir
+🌸 Pinky
+	•	Tenta prever a posição do Pac-Man alguns blocos à frente.
+
+🔵 Inky
+	•	Calcula um alvo baseado na direção do Pac-Man.
+
+🟠 Clyde
+	•	Persegue o Pac-Man quando está longe.
+	•	Quando está perto, foge para um canto do mapa.
+
+Quando o Pac-Man come uma Power Pellet, os fantasmas entram em modo de fuga e se movem aleatoriamente.
+
+⸻
 
 🗺️ Estrutura do Mapa
 
-O mapa do jogo é representado por uma matriz onde cada número representa um tipo de elemento.
-
-Valor
-Significado
-0
-Caminho com ponto
-1
-Parede
-2
-Caminho já percorrido
-3
-Power Pellet
-4
-Porta da casa dos fantasmas
-9
-Área bloqueada do mapa
-
+O mapa do jogo é representado por uma matriz, onde cada número representa um tipo de elemento:
