@@ -72,8 +72,12 @@ power_timer = 0
 game_over = False
 vitoria = False
 
-fantasma = {"x": 23, "y": 28}
-
+fantasmas = [
+    {"nome":"blinky","x":12,"y":14,"cor":(255,0,0)},
+    {"nome":"pinky","x":13,"y":14,"cor":(255,105,180)},
+    {"nome":"inky","x":11,"y":14,"cor":(0,255,255)},
+    {"nome":"clyde","x":14,"y":14,"cor":(255,165,0)}
+]
 
 # ================= FUNÇÕES =================
 def eh_parede(valor):
@@ -107,7 +111,26 @@ def bfs(inicio, fim):
                     fila.append((nx, ny))
                     visitado[(nx, ny)] = atual
     return []
+    
+def alvo_pinky():
+    tx = pac_x + direcao[0]*4
+    ty = pac_y + direcao[1]*4
+    return (max(0,min(COLUNAS-1,tx)), max(0,min(LINHAS-1,ty)))
 
+
+def alvo_inky():
+    tx = pac_x + direcao[0]*2
+    ty = pac_y + direcao[1]*2
+    return (max(0,min(COLUNAS-1,tx)), max(0,min(LINHAS-1,ty)))
+
+
+def alvo_clyde(fx,fy):
+    dist = abs(fx-pac_x)+abs(fy-pac_y)
+    
+    if dist > 8:
+        return (pac_x,pac_y)
+    else:
+        return (0,LINHAS-1)
 
 def mover():
     global pac_x, pac_y, pontuacao, power, power_timer
@@ -134,7 +157,7 @@ def reset_posicoes():
     fantasma["x"], fantasma["y"] = 23, 28
 
 
-def mover_fantasma():
+def mover_fantasmas():
     global vidas, pontuacao, power, game_over, tempo_fantasma
 
     agora = pygame.time.get_ticks()
@@ -218,7 +241,7 @@ while True:
     if iniciado and not game_over and not vitoria:
 
         mover()
-        mover_fantasma()
+        mover_fantasmas()
 
         if power and pygame.time.get_ticks() - power_timer > 4000:
             power = False
@@ -298,13 +321,16 @@ while True:
     )
 
     # ================= FANTASMA =================
-    cor = (100, 100, 255) if power else (255, 60, 60)
+    for f in fantasmas:
+
+    cor = (100,100,255) if power else f["cor"]
 
     pygame.draw.circle(
         tela,
         cor,
-        (fantasma["x"] * TAMANHO_BLOCO + 12, fantasma["y"] * TAMANHO_BLOCO + 12),
-        10,
+        (f["x"]*TAMANHO_BLOCO+12,
+         f["y"]*TAMANHO_BLOCO+12),
+        10
     )
 
     # ================= HUD =================
