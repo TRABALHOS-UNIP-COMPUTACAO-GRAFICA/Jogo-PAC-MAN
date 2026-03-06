@@ -1,55 +1,145 @@
-🟡 Pac-Man em Python
+# 🎮 Jogo Pac-Man – Computação Gráfica
 
-Projeto desenvolvido para a disciplina de Computação Gráfica, que apresenta uma réplica do clássico jogo Pac-Man, utilizando Python e a biblioteca Pygame.
+**Trabalho da disciplina de Computação Gráfica – UNIP**
 
-O objetivo do projeto é aplicar conceitos estudados em aula, como primitivas gráficas, lógica de movimentação, detecção de colisão e inteligência artificial básica para os fantasmas.
+---
 
-⸻
+## 👥 Integrantes
 
-🎮 Sobre o Projeto
+| Nome | RA |
+|------|----|
+| Sydhiney Silva | G75EJI5 |
+| Eduardo Theodoro | R153FJ3 |
+| Ariane Veras | 197123 |
+| Victor Donadi | G593IC1 |
 
-Este projeto implementa uma versão jogável do Pac-Man com:
-	•	Labirinto inspirado no jogo clássico
-	•	Sistema de pontuação
-	•	Sistema de vidas
-	•	Power Pellet (modo de poder)
-	•	Inteligência artificial para os fantasmas
-	•	Tela inicial
-	•	Tela de vitória
-	•	Tela de Game Over
-	•	Reinício do jogo
+---
 
-O jogo foi desenvolvido utilizando primitivas gráficas do Pygame, como:
-	•	pygame.draw.rect()
-	•	pygame.draw.circle()
+## 🧠 Sobre o Projeto
 
-Essas primitivas são usadas para desenhar o labirinto, o Pac-Man, os fantasmas e os itens do jogo.
+Este projeto consiste no desenvolvimento de uma versão do clássico jogo **Pac-Man**, implementada em Python como parte da disciplina de **Computação Gráfica**.
 
-⸻
+O objetivo do jogo é controlar o personagem **Pac-Man**, navegando pelo labirinto para coletar os pontos espalhados pelo mapa enquanto evita os fantasmas inimigos.
 
-🧠 Inteligência Artificial dos Fantasmas
+Além de recriar um dos jogos mais icônicos da história dos videogames, o projeto tem como foco aplicar conceitos importantes da computação gráfica e da programação de jogos, como:
 
-Os fantasmas utilizam um algoritmo de busca baseado em BFS (Breadth-First Search) para encontrar o menor caminho até o Pac-Man.
+- Renderização de elementos gráficos
+- Controle de movimento do personagem
+- Detecção de colisão
+- Estrutura de game loop
+- Organização de lógica de jogo
 
-Cada fantasma possui um comportamento inspirado no jogo original:
+O Pac-Man é um clássico jogo arcade em que o jogador percorre um labirinto coletando pontos enquanto tenta evitar fantasmas inimigos. :contentReference[oaicite:1]{index=1}
 
-🔴 Blinky
-	•	Persegue diretamente o Pac-Man.
+---
 
-🌸 Pinky
-	•	Tenta prever a posição do Pac-Man alguns blocos à frente.
+## 🎮 Mecânica do Jogo
 
-🔵 Inky
-	•	Calcula um alvo baseado na direção do Pac-Man.
+O jogador controla o **Pac-Man** dentro de um labirinto.
 
-🟠 Clyde
-	•	Persegue o Pac-Man quando está longe.
-	•	Quando está perto, foge para um canto do mapa.
+Objetivos do jogo:
 
-Quando o Pac-Man come uma Power Pellet, os fantasmas entram em modo de fuga e se movem aleatoriamente.
+- Comer todos os pontos espalhados pelo mapa
+- Evitar os fantasmas
+- Sobreviver o máximo possível
 
-⸻
+Durante o jogo:
 
-🗺️ Estrutura do Mapa
+- O Pac-Man se move pelo mapa utilizando as **teclas direcionais**
+- Os fantasmas se movem pelo labirinto tentando capturar o jogador
+- Ao coletar todos os pontos, o jogador vence a fase
 
-O mapa do jogo é representado por uma matriz, onde cada número representa um tipo de elemento:
+---
+
+## 🎯 Controles
+
+| Tecla | Ação |
+|------|------|
+| ⬆️ | Mover para cima |
+| ⬇️ | Mover para baixo |
+| ⬅️ | Mover para esquerda |
+| ➡️ | Mover para direita |
+
+---
+
+## ⚙️ Tecnologias Utilizadas
+
+- **Python**
+- **Pygame**
+- Lógica de programação
+- Estruturas de dados
+- Programação orientada a objetos
+
+Bibliotecas como o **Pygame** são amplamente usadas para desenvolver jogos 2D em Python, pois fornecem recursos para renderização gráfica, controle de eventos e loops de jogo. :contentReference[oaicite:2]{index=2}
+
+---
+
+## ▶️ Como Executar o Projeto
+
+### 📌 Pré-requisitos
+
+Instalar Python 3:
+
+https://www.python.org/
+
+Instalar a biblioteca pygame:
+
+```bash
+pip install pygame
+```
+
+---
+
+### 📌 Executando o jogo
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/TRABALHOS-UNIP-COMPUTACAO-GRAFICA/Jogo-PAC-MAN.git
+```
+
+Entre na pasta do projeto:
+
+```bash
+cd Jogo-PAC-MAN
+```
+
+Execute o arquivo principal:
+
+```bash
+python main.py
+```
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+Jogo-PAC-MAN/
+│
+├── main.py
+├── pacman.py
+├── fantasmas.py
+├── mapa.py
+├── assets/
+│   ├── imagens
+│   └── sons
+│
+└── README.md
+```
+
+---
+
+## 🎓 Objetivo Acadêmico
+
+O projeto foi desenvolvido como atividade prática da disciplina de **Computação Gráfica**, com o objetivo de aplicar conceitos como:
+
+- Representação gráfica de objetos
+- Movimentação em ambiente 2D
+- Interação com o usuário
+- Lógica de jogos
+
+Além disso, o trabalho incentiva o desenvolvimento de habilidades importantes em programação, como organização de código, trabalho em equipe e utilização de controle de versão com **Git e GitHub**.
+
+---
+
