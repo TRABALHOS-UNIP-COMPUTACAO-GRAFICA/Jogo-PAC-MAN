@@ -14,6 +14,8 @@ ALTURA = LINHAS * TAMANHO_BLOCO
 tempo_fantasma = 0
 velocidade_fantasma = 400
 iniciado = False
+tempo_inicio_fantasma = pygame.time.get_ticks()
+delay_perseguicao = 3000  # 3 segundos
 
 tela = pygame.display.set_mode((LARGURA, ALTURA + 60))
 pygame.display.set_caption("Pac-Man")
@@ -151,16 +153,34 @@ def mover():
 
 
 def reset_posicoes():
-    global pac_x, pac_y, direcao
+    global pac_x, pac_y, direcao, tempo_inicio_fantasma
+
     pac_x, pac_y = 12, 17
     direcao = (0, 0)
-    fantasma["x"], fantasma["y"] = 23, 28
+
+    # posições iniciais dos fantasmas
+    posicoes_iniciais = [
+        (12,14),  # Blinky
+        (13,14),  # Pinky
+        (11,14),  # Inky
+        (14,14)   # Clyde
+    ]
+
+    for i, f in enumerate(fantasmas):
+        f["x"], f["y"] = posicoes_iniciais[i]
+
+    tempo_inicio_fantasma = pygame.time.get_ticks()
 
 
 def mover_fantasmas():
     global vidas, pontuacao, power, game_over, tempo_fantasma
 
     agora = pygame.time.get_ticks()
+
+    # delay de 3s antes do fantasma começar a perseguir
+    if agora - tempo_inicio_fantasma < delay_perseguicao:
+        return
+
     if agora - tempo_fantasma < velocidade_fantasma:
         return
     tempo_fantasma = agora
@@ -210,12 +230,17 @@ while True:
         if e.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        
 
         if e.type == pygame.KEYDOWN:
 
             # Iniciar jogo
             if e.key == pygame.K_SPACE and not iniciado:
                 iniciado = True
+            #Sair
+            if e.key== pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
 
             # Reiniciar
             elif e.key == pygame.K_r:
@@ -257,15 +282,16 @@ while True:
         titulo = pygame.font.SysFont("Arial", 50, bold=True)
         subtitulo = pygame.font.SysFont("Arial", 25)
 
-        tela.blit(
-            titulo.render("PAC-MAN", True, AMARELO),
-            (LARGURA // 2 - 120, ALTURA // 2 - 80),
-        )
+        titulo_surface = titulo.render("PAC-MAN", True, AMARELO)
+        titulo_rect = titulo_surface.get_rect(center=(LARGURA // 2, ALTURA // 2 - 80))
+        tela.blit(titulo_surface, titulo_rect)
 
-        tela.blit(
-            subtitulo.render("Pressione ESPAÇO para iniciar", True, BRANCO),
-            (LARGURA // 2 - 170, ALTURA // 2),
-        )
+        sub_surface = subtitulo.render(
+        "Pressione ESPAÇO para iniciar ou ESC para sair", True, BRANCO
+)
+        sub_rect = sub_surface.get_rect(center=(LARGURA // 2, ALTURA // 2))
+        tela.blit(sub_surface, sub_rect)
+        
 
         pygame.display.flip()
         continue
@@ -372,7 +398,7 @@ while True:
             tela.blit(texto_principal, rect)
 
         texto_secundario = fonte_pequena.render(
-            "Pressione R para reiniciar", True, BRANCO
+            "Pressione R para reiniciar ou ESC para sair", True, BRANCO
         )
 
         rect2 = texto_secundario.get_rect(center=(LARGURA // 2, ALTURA // 2 + 30))
@@ -402,7 +428,7 @@ while True:
             tela.blit(texto_principal, rect)
 
         texto_secundario = fonte_pequena.render(
-            "Pressione R para jogar novamente",
+            "Pressione R para jogar novamente ou ESC para sair",
             True,
             BRANCO,
         )
