@@ -67,6 +67,7 @@ mapa = mapa_original
 pac_x = 12
 pac_y = 17
 direcao = (0, 0)
+proxima_direcao = (0, 0)
 pontuacao = 0
 vidas = 3
 power = False
@@ -222,6 +223,7 @@ def reset_posicoes():
     global pac_x, pac_y, direcao
     pac_x, pac_y = 12, 17
     direcao = (0, 0)
+    proxima_direcao = (0,0)
     fantasma["x"], fantasma["y"] = 10, 15
 
 
@@ -237,40 +239,34 @@ def resetar():
 
 
 def mover_pacman():
-    global fantasmas_comidos, direcao, direcao, pac_x, pac_y, pontuacao, power, power_timer ,frutas,velocidade_fantasma,delay_perseguicao
+    global fantasmas_comidos, direcao, proxima_direcao, pac_x, pac_y, pontuacao, power, power_timer, frutas, velocidade_fantasma, delay_perseguicao
 
-    # tenta virar
+    nx_prox = (pac_x + proxima_direcao[0]) % COLUNAS
+    ny_prox = (pac_y + proxima_direcao[1]) % LINHAS
+
+    if mapa[ny_prox][nx_prox] != 1 and mapa[ny_prox][nx_prox] != 4:
+        direcao = proxima_direcao 
+
     nx = (pac_x + direcao[0]) % COLUNAS
     ny = (pac_y + direcao[1]) % LINHAS
 
-    if mapa[ny][nx] != 1 :
-        
-            pac_x = nx
-            pac_y = ny
+    if mapa[ny][nx] != 1 and mapa[ny][nx] != 4:
+        pac_x = nx
+        pac_y = ny
+    else:
+        direcao = (0, 0) 
 
-            if mapa[pac_y][pac_x] == 0:
-                mapa[pac_y][pac_x] = 2
-                pontuacao += 10
-    # move
-   
+    if mapa[pac_y][pac_x] == 0:
+        mapa[pac_y][pac_x] = 2
+        frutas -= 1
+        pontuacao += 10
 
-    if 0 <= nx < COLUNAS and 0 <= ny < LINHAS:
-        if mapa[ny][nx] != 1:
-            pac_x, pac_y = nx, ny
-
-            if mapa[ny][nx] == 0:
-                mapa[ny][nx] = 2
-                frutas -= 1
-                # velocidade_fantasma -=20
-                # delay_perseguicao -=20
-                pontuacao += 10
-
-            if mapa[ny][nx] == 3:
-                mapa[ny][nx] = 2
-                pontuacao += 50
-                power = True
-                power_timer = pygame.time.get_ticks()
-                fantasmas_comidos = 0
+    if mapa[pac_y][pac_x] == 3:
+        mapa[pac_y][pac_x] = 2
+        pontuacao += 50
+        power = True
+        power_timer = pygame.time.get_ticks()
+        fantasmas_comidos = 0
 while True:
     clock.tick(10) 
 
@@ -296,13 +292,13 @@ while True:
         if evento.type == pygame.KEYDOWN:
             match evento.key:
                 case pygame.K_a|pygame.K_LEFT:
-                    direcao = (-1, 0)
+                    proxima_direcao = (-1, 0)
                 case pygame.K_d|pygame.K_RIGHT:
-                    direcao = (1, 0)
+                    proxima_direcao = (1, 0)
                 case pygame.K_w|pygame.K_UP:
-                    direcao = (0, -1)
+                    proxima_direcao = (0, -1)
                 case pygame.K_s|pygame.K_DOWN:
-                    direcao = (0, 1)
+                    proxima_direcao = (0, 1)
                 case pygame.K_r :
                     if game_over == True or vitoria == True:
                         resetar()
