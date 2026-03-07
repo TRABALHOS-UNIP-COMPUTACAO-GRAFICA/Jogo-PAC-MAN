@@ -107,7 +107,7 @@ cd Jogo-PAC-MAN
 Execute o arquivo principal:
 
 ```bash
-python main.py
+python pacman.py
 ```
 
 ---
@@ -117,13 +117,7 @@ python main.py
 ```
 Jogo-PAC-MAN/
 │
-├── main.py
 ├── pacman.py
-├── fantasmas.py
-├── mapa.py
-├── assets/
-│   ├── imagens
-│   └── sons
 │
 └── README.md
 ```
