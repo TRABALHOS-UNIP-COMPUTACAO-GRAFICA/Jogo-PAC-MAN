@@ -7,12 +7,7 @@ from sqlalchemy import case
 
 # Inicializa o pygame
 pygame.init()
-pygame.joystick.init()
-joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
-if joysticks:
-    joysticks[0].init()
 
-    print(f"Controle detectado: {joysticks[0].get_name()}")
 # Configurações
 TAMANHO_BLOCO = 24
 LINHAS = 30
@@ -25,8 +20,10 @@ vitoria = False
 tela = pygame.display.set_mode((LARGURA,800))
 pygame.display.set_caption("Pac-Man")
 font = pygame.font.SysFont("Arial", 20)
+tempo_fantasma = 0 
 game_over = False
 # Cores
+frutas = 297
 PRETO = (0, 0, 0)
 AZUL = (0, 0, 255)
 AMARELO = (255, 255, 0)
@@ -57,7 +54,7 @@ mapa_original = [
     [2, 2, 2, 2, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 2, 2, 2, 2], # 20
     [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1], # 21
     [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1], # 22
-    [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1], # 23
+    [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1], # 23
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], # 24
     [1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1], # 25
     [1, 0, 1, 2, 1, 0, 1, 2, 2, 2, 1, 0, 1, 0, 1, 2, 2, 2, 1, 0, 1, 2, 1, 0, 1], # 3
@@ -75,15 +72,15 @@ vidas = 3
 power = False
 power_timer = 0
 fantasmas_comidos = 0
-power = False
-power_timer = 0
-fantasmas_comidos = 0
 tempo_animacao = 0
 frame_boca = 0  # 0 = fechada, 1 = entreaberta, 2 = aberta
 velocidade_animacao = 150 # milissegundos
 # ================= FANTASMA =================
 fantasma = {"x": 10, "y": 15}
 # ================= POWER PELLETS =================
+tempo_inicio_fantasma = pygame.time.get_ticks()
+delay_perseguicao = 300  # 3 segundos
+velocidade_fantasma = 150
 
 
 clock = pygame.time.Clock()
@@ -113,11 +110,17 @@ def bfs(inicio, fim):
     return []
 # ================= MOVIMENTO FANTASMA =================
 def mover_fantasma():
-    global vidas, pontuacao, power, game_over,mapa
+    global vidas, pontuacao, power, game_over,mapa, tempo_fantasma
+    if agora - tempo_inicio_fantasma < delay_perseguicao:
+        return
+
+    if agora - tempo_fantasma < velocidade_fantasma:
+        return
+    tempo_fantasma = agora
     if fantasma["x"] == 10 and fantasma["y"] ==15:
-                mapa[13][13]=0
-                mapa[13][11]=0
-                mapa[13][12]=0
+                mapa[13][13]=2
+                mapa[13][11]=2
+                mapa[13][12]=2
     elif fantasma["x"] == 14 and fantasma["y"] in(11,12,13):
                 mapa[13][13]=4
                 mapa[13][11]=4
@@ -138,12 +141,12 @@ def mover_fantasma():
 
     # Colisão
     if fantasma["x"] == pac_x and fantasma["y"] == pac_y:
-        if power:
+        if power == True:
             pontuacao += 200
             fantasma["x"], fantasma["y"] = 10, 15
+            power = False
         else:
             vidas -= 1
-            power = False
             if vidas <= 0:
                 game_over = True
             else:
@@ -234,7 +237,7 @@ def resetar():
 
 
 def mover_pacman():
-    global fantasmas_comidos, direcao, direcao, pac_x, pac_y, pontuacao, power, power_timer
+    global fantasmas_comidos, direcao, direcao, pac_x, pac_y, pontuacao, power, power_timer ,frutas,velocidade_fantasma,delay_perseguicao
 
     # tenta virar
     nx = (pac_x + direcao[0]) % COLUNAS
@@ -257,6 +260,9 @@ def mover_pacman():
 
             if mapa[ny][nx] == 0:
                 mapa[ny][nx] = 2
+                frutas -= 1
+                # velocidade_fantasma -=20
+                # delay_perseguicao -=20
                 pontuacao += 10
 
             if mapa[ny][nx] == 3:
@@ -283,7 +289,6 @@ while True:
         mapa[13][11]=4
         mapa[13][12]=4
     for evento in pygame.event.get():
-        print(evento.type) 
         if evento.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -299,12 +304,15 @@ while True:
                 case pygame.K_s|pygame.K_DOWN:
                     direcao = (0, 1)
                 case pygame.K_r :
-                    if game_over == True:
+                    if game_over == True or vitoria == True:
                         resetar()
-   
+    if power and pygame.time.get_ticks() - power_timer > 4000:
+            power = False
     if agora - ultimo > atraso:
         ultimo = agora
-    if game_over == False:
+    if frutas == 0 :
+        vitoria = True
+    if game_over == False and vitoria ==False:
         mover_pacman()
         
         mover_fantasma()
@@ -312,7 +320,9 @@ while True:
     if game_over == True:
         text_surface = font.render("Game Over! Press R to Restart", True, BRANCO)
         tela.blit(text_surface, (LARGURA//2 - text_surface.get_width()//2, ALTURA//2))
-    if vitoria:
+    if not any(0 in linha or 3 in linha for linha in mapa):
+            vitoria = True
+    if vitoria == True:
 
         # Fundo escurecido transparente
         overlay = pygame.Surface((LARGURA, ALTURA))
@@ -347,5 +357,4 @@ while True:
   
     tela.blit(text_surface, (10, ALTURA+15))
 
-    pygame.display.update()
     pygame.display.update()

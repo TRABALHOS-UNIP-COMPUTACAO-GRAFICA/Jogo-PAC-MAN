@@ -169,7 +169,6 @@ def reset_posicoes():
     for i, f in enumerate(fantasmas):
         f["x"], f["y"] = posicoes_iniciais[i]
 
-    tempo_inicio_fantasma = pygame.time.get_ticks()
 
 
 def mover_fantasmas():
